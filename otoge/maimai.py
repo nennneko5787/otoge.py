@@ -282,7 +282,7 @@ class MaiMaiClient:
         "logger",
     )
 
-    def __init__(self, logger: logging.Logger = None):
+    def __init__(self, logger: Optional[logging.Logger] = None):
         if logger is None:
             self.__setupLogger()
         else:
