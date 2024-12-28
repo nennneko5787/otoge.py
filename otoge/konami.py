@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import re
 from httpx import AsyncClient
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Optional
@@ -37,6 +38,24 @@ class KonamiClient:
             password (str): ログイン先ユーザーのパスワード。
             loop (asyncio.AbstractEventLoop, optional): asyncioのイベントループ。省略可能です。
         """
+        if (
+            (len(konamiId) < 8)
+            or (len(konamiId) > 32)
+            or (re.match("^[a-zA-Z0-9-_.]+$", konamiId))
+        ):
+            WrongFormat(
+                "KONAMI IDは半角英小文字･数字･｢-｣､｢_｣､｢.｣で8から32文字で入力してください｡"
+            )
+
+        if (
+            (len(password) < 8)
+            or (len(password) > 32)
+            or (re.match("^[a-zA-Z0-9-]+$", password))
+        ):
+            WrongFormat(
+                "パスワードは8～32文字で半角英数字を組み合わせて入力してください。「-」を含めることができます。"
+            )
+
         if loop is None:
             loop = asyncio.get_event_loop()
         with ThreadPoolExecutor() as executor:
