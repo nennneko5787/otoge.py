@@ -1,4 +1,15 @@
+import os
+import orjson
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from tls_client import Session
+import time
 
 captchaGroups = [
     [
@@ -66,9 +77,24 @@ captchaGroups = [
     ],
 ]
 
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+
 
 class KonamiCaptcha:
     def __init__(self):
+        # Set up Chrome options and Selenium WebDriver
+        options = Options()
+        options.add_argument(
+            "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+        )
+        # options.add_argument("--headless")
+        options.add_argument("--disable-blink-features=AutomationControlled")
+        service = Service(log_path=os.devnull)
+
+        self.driver = webdriver.Chrome(service=service, options=options)
+        self.driver.set_window_size(1366, 768)
+        self.driver.get("https://p.eagate.573.jp/")
+
         self.http = Session(
             client_identifier="chrome_116",
             random_tls_extension_order=True,
@@ -80,58 +106,118 @@ class KonamiCaptcha:
             }
         )
 
+        self.mfa = False
+        self.action = ActionChains(self.driver)
+
     def login(self, konamiId: str, password: str):
-        response = self.http.get("https://p.eagate.573.jp/")
-        response = self.http.get(
-            "https://p.eagate.573.jp/gate/p/login.html", allow_redirects=False
-        )
-        response = self.http.get(response.headers["Location"], allow_redirects=False)
-        response = self.http.get(response.headers["Location"], allow_redirects=False)
-        response = self.http.get(response.headers["Location"], allow_redirects=False)
-        response = self.http.get("https://my.konami.net/api/sessions/isWebView")
+        self.konamiId = konamiId
+        self.password = password
 
-        response = self.http.get("https://my.konami.net/api/captchas")
-        print("Captcha Data:", response.status_code)
-        captchaData = response.json()
-        print(captchaData)
-        main = captchaData["correctPictureUri"]
+        self.driver.get("https://p.eagate.573.jp/")
+        self.driver.get("https://p.eagate.573.jp/gate/p/login.html")
 
-        response = self.http.get(
-            f"https://my.konami.net/api/captchas/picture?token={main}"
-        )
-        group = 0
-        for _i, _list in enumerate(captchaGroups):
-            if int(response.headers["Content-Length"]) in _list:
-                group = _i
+        # Accepting cookies using self.ActionChains
+        try:
+            button = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.ID, "onetrust-accept-btn-handler"))
+            )
+            time.sleep(1)
+            self.action.move_to_element(button).click().perform()
 
-        captchaAnswers = ""
+            # Enter Konami ID and click login button
+            self.driver.find_element(By.ID, "login-select-form-id").send_keys(
+                self.konamiId
+            )
+            login_button = self.driver.find_element(
+                By.ID, "login-select-form-login-button-id"
+            )
+            self.action.move_to_element(login_button).click().perform()
 
-        for uri in captchaData["testPictureUris"]:
-            response = self.http.get(
-                f"https://my.konami.net/api/captchas/picture?token={uri}"
+            button = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable(
+                    (By.ID, "passkey-code-confirmation-code-issue-button-id")
+                )
+            )
+            self.action.move_to_element(button).click().perform()
+            self.mfa = False
+        except:
+            WebDriverWait(self.driver, 10).until(
+                EC.text_to_be_present_in_element(
+                    (By.TAG_NAME, "body"), "すべてチェックしてください。"
+                )
             )
 
-            if int(response.headers["Content-Length"]) in captchaGroups[group]:
-                captchaAnswers += "1"
-            else:
-                captchaAnswers += "0"
+            self.driver.find_element(By.ID, "login-form-password").send_keys(
+                self.password
+            )
 
-        print("Captcha Answers", captchaAnswers)
+            for cookie in self.driver.get_cookies():
+                self.http.cookies.set(cookie["name"], cookie["value"])
 
-        response = self.http.post(
-            "https://my.konami.net/api/auths/login/authTypes",
-            json={
-                "id": konamiId,
-            },
-        )
-        print("authTypes:", response.text, response.status_code)
+            response = self.http.get("https://my.konami.net/api/captchas")
+            print("Captcha Data:", response.status_code)
+            captchaData = response.json()
+            print(captchaData)
+            main = captchaData["correctPictureUri"]
 
-        response = self.http.post(
-            "https://my.konami.net/api/logins",
-            json={
-                "captchaAnswers": captchaAnswers,
-                "id": konamiId,
-                "password": password,
-            },
-        )
-        print("Final Step:", response.text, response.status_code)
+            response = self.http.get(
+                f"https://my.konami.net/api/captchas/picture?token={main}"
+            )
+            group = 0
+            for _i, _list in enumerate(captchaGroups):
+                if int(response.headers["Content-Length"]) in _list:
+                    group = _i
+
+            captchaAnswers = ""
+
+            elements = self.driver.find_elements(
+                By.CLASS_NAME, "Captcha_goemon__test--default__bPle8.col-sm-2.col-4"
+            )
+
+            for index, uri in enumerate(captchaData["testPictureUris"]):
+                response = self.http.get(
+                    f"https://my.konami.net/api/captchas/picture?token={uri}"
+                )
+
+                if int(response.headers["Content-Length"]) in captchaGroups[group]:
+                    captchaAnswers += "1"
+                    self.action.move_to_element(elements[index]).click().perform()
+                else:
+                    captchaAnswers += "0"
+
+            print("Captcha Answers", captchaAnswers)
+
+            login_button = self.driver.find_element(By.ID, "login-form-login-button-id")
+            self.action.move_to_element(login_button).click().perform()
+
+            WebDriverWait(self.driver, 30).until(
+                EC.text_to_be_present_in_element(
+                    (By.TAG_NAME, "body"),
+                    "送信されたメールに記載されている6桁の「確認コード」を入力してください。",
+                )
+            )
+
+            self.mfa = True
+
+    def enterCode(self, code: str):
+        if not self.mfa:
+            self.driver.find_element(By.ID, "two-step-code-form-id").send_keys(code)
+            submit_button = self.driver.find_element(
+                By.ID, "passkey-login-complete-redirect-button-id"
+            )
+            self.action.move_to_element(submit_button).click().perform()
+
+            WebDriverWait(self.driver, 30).until(
+                EC.text_to_be_present_in_element((By.TAG_NAME, "body"), "マイページ")
+            )
+        else:
+            self.driver.find_element(By.ID, "two-step-code-form-id").send_keys(code)
+            submit_button = self.driver.find_element(
+                By.ID, "two-step-code-form-verification-button-id"
+            )
+            self.action.move_to_element(submit_button).click().perform()
+
+            WebDriverWait(self.driver, 30).until(
+                EC.text_to_be_present_in_element((By.TAG_NAME, "body"), "マイページ")
+            )
+        return self.driver.get_cookies()

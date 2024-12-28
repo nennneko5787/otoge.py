@@ -15,9 +15,6 @@
 
 ### BEMANI (KONAMI)
 
-> [!Note]
-> パスワード認証は利用できません(クッキーを使用したログインのみ使用可)。
-
 - [ ] pop'n music
 - [ ] beatmania
 - [ ] SOUND VORTEX
