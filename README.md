@@ -11,11 +11,16 @@
 
 - [ ] CHUNITHM
 - [x] maimai
+  - プロフィール閲覧
+  - プレイ履歴閲覧
+  - ユーザーネーム変更
 - [ ] オンゲキ
 
 ### BEMANI (KONAMI)
 
-- [ ] pop'n music
+- [x] pop'n music
+  - プロフィール閲覧
+  - プレイ履歴閲覧
 - [ ] beatmania
 - [ ] SOUND VORTEX
 
@@ -33,6 +38,8 @@
 
 - httpx
 - beautifulsoup4
+- selenium
+- tls-client
 
 ```bash
 # development builds
@@ -63,6 +70,53 @@ async def main():
         print(
             f"{record.name} [{record.difficult} / {record.playedAt}]: {record.scoreRank} ({record.percentage})"
         )
+
+
+asyncio.run(main())
+
+```
+
+### pop'n music
+
+#### Login With KONAMI ID
+
+```python
+import asyncio
+
+from otoge import POPNClient
+
+popn = POPNClient(skipKonami=False)
+
+
+async def main():
+    await popn.loginWithID("<KONAMI ID>", "<PASSWORD>")
+    code = input("Enter Code: ")
+    await popn.enterCode(code)
+    print(await popn.fetchProfile())
+
+
+asyncio.run(main())
+
+```
+
+#### Login With Cookie
+
+```python
+import asyncio
+import json as JSON
+
+from otoge import POPNClient
+
+popn = POPNClient(skipKonami=True)
+
+
+async def main():
+    # popn.http.cookies または popn.konami.http.cookies で抽出できます
+    with open("cookies.json") as f:
+        data = f.read()
+    cookies = json.loads(data)
+    await popn.loginWithCookie(cookies)
+    print(await popn.fetchProfile())
 
 
 asyncio.run(main())
