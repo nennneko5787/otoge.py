@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "otoge.py"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="nennneko5787", email="h4369@nennneko5787.net" },
 ]
-description = "You can get and change the play history of Gekichu Mai (CHUNITHM, maimai, ONGEKI), BEMANI (pop'n music, beatmania, SOUND VORTEX) and many more."
+description = "You can get and change the play history of GekiChuMai (CHUNITHM, ONGEKI, maimai), BEMANI (pop'n music, beatmania, SOUND VORTEX) and many more."
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -27,4 +27,4 @@ Issues = "https://github.com/nennneko5787/otoge.py/issues"
 dependencies = { file = ["requirements.txt"] }
 
 [tool.setuptools.packages.find]
-exclude = ["devtests*"]
+exclude = ["devtests*", "venv*"]
