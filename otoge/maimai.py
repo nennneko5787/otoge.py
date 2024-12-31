@@ -207,7 +207,7 @@ class MaiMaiAime:
                 strip=True
             )
             playedAt = datetime.strptime(_playedAt, "%Y/%m/%d %H:%M").replace(
-                timezone=timezone(timedelta(hours=9))
+                tzinfo=timezone(timedelta(hours=9))
             )
             cleared = False
             if (

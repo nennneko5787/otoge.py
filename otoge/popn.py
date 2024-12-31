@@ -168,7 +168,7 @@ class POPNClient:
 
         _lastPlayedAt = elements[7].get_text(strip=True)
         lastPlayedAt = datetime.strptime(_lastPlayedAt, "%y/%m/%d %H時頃").replace(
-            timezone=timezone(timedelta(hours=9))
+            tzinfo=timezone(timedelta(hours=9))
         )
 
         _bannerUrl = soup.select_one("div[class='fpass_img']").attrs.get("style")
