@@ -1,7 +1,7 @@
 import re
 import logging
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from dataclasses import dataclass
 
 from bs4 import BeautifulSoup
@@ -206,7 +206,9 @@ class MaiMaiAime:
             _playedAt = recordElement.select_one("span[class='v_b']").get_text(
                 strip=True
             )
-            playedAt = datetime.strptime(_playedAt, "%Y/%m/%d %H:%M")
+            playedAt = datetime.strptime(_playedAt, "%Y/%m/%d %H:%M").replace(
+                timezone=timezone(timedelta(hours=9))
+            )
             cleared = False
             if (
                 recordElement.select_one("img[class='w_80 f_r']") is not None

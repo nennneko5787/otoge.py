@@ -4,7 +4,7 @@ import logging
 from httpx import AsyncClient
 from typing import List, Optional
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 from bs4 import BeautifulSoup
 
@@ -167,7 +167,9 @@ class POPNClient:
         localModePlayCount = int(elements[6].get_text(strip=True))
 
         _lastPlayedAt = elements[7].get_text(strip=True)
-        lastPlayedAt = datetime.strptime(_lastPlayedAt, "%y/%m/%d %H時頃")
+        lastPlayedAt = datetime.strptime(_lastPlayedAt, "%y/%m/%d %H時頃").replace(
+            timezone=timezone(timedelta(hours=9))
+        )
 
         _bannerUrl = soup.select_one("div[class='fpass_img']").attrs.get("style")
         match: re.Match = re.search(r"background\:url\(\.\.(.*)\)", _bannerUrl)
