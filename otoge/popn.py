@@ -153,7 +153,7 @@ class POPNClient:
         _usedCharacters = str(elements[2])
         matches = re.findall(r'<img src="([^"]+)"><br/>([^<]+)', _usedCharacters)
         usedCharacters = [
-            POPNCharacter(f"https://p.eagate.573.jp{match[1]}", match[0])
+            POPNCharacter(match[1], f"https://p.eagate.573.jp{match[0]}")
             for match in matches
         ]
 
