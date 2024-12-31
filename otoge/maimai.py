@@ -11,7 +11,11 @@ from .logger import stream_supports_colour, ColourFormatter
 from .exceptions import *
 from .enum import *
 
-__all__ = ("MaiMaiClient",)
+__all__ = (
+    "MaiMaiClient",
+    "MaiMaiAime",
+    "MaiMaiPlayRecord",
+)
 
 
 @dataclass
@@ -59,15 +63,23 @@ class MaiMaiAime:
         "http",
         "type",
         "rawComment",
+        "iconUrl",
         "logger",
     )
 
     def __init__(
-        self, idx: int, name: str, trophy: str, cookies: Cookies, logger: logging.Logger
+        self,
+        idx: int,
+        name: str,
+        trophy: str,
+        iconUrl: str,
+        cookies: Cookies,
+        logger: logging.Logger,
     ):
         self.idx = idx
         self.name = name
         self.trophy = trophy
+        self.iconUrl = iconUrl
         self.rawComment: Optional[str] = None
         self.http = AsyncClient(cookies=cookies, follow_redirects=True, verify=False)
         self.type = GameType.MAIMAI
@@ -367,11 +379,13 @@ class MaiMaiClient:
                 .text
             )
             name = cardElement.select_one("div[class='name_block f_l f_16']").text
+            iconUrl = cardElement.select_one("div[class='w_112 f_l']").attrs.get("src")
 
             card = MaiMaiAime(
                 idx=idx,
                 name=name,
                 trophy=trophy,
+                iconUrl=iconUrl,
                 cookies=self.http.cookies,
                 logger=self.logger,
             )
