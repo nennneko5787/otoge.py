@@ -13,71 +13,82 @@ from .exceptions import *
 
 __all__ = ("KonamiCaptcha",)
 
-# base64エンコード後のサイズ
+# 画像サイズ
+# 不明: 7328
 
 captchaGroups = {
     "pawapuro-dog": [
-        9638,
-        9782,
-        9210,
-        11354,
-        9794,
+        5230,
+        8499,
+        7210,
+        7318,
+        6889,
+        7767,
     ],
     "ebisumaru": [
-        18278,
-        15810,
-        18974,
-        20942,
-        18278,
-        14750,
-        19198,
+        15689,
+        11840,
+        14212,
+        13691,
+        15689,
+        14382,
+        11046,
     ],
     "chousi-kun": [
-        7742,
-        8418,
-        7106,
-        7246,
-        9486,
-        9638,
+        7212,
+        5790,
+        5418,
+        6295,
+        5312,
+        7096,
+        11010,
+        7328,
     ],
     "pink": [
-        11634,
-        13374,
-        11282,
+        8444,
+        10014,
+        9928,
     ],
     "goemon": [
-        15122,
-        12106,
-        12842,
-        14714,
+        11018,
+        11855,
+        11601,
+        11324,
+        9061,
+        9614,
     ],
     "frog": [
-        12518,
-        13222,
-        13566,
-        14402,
-        11790,
+        8825,
+        9898,
+        9370,
+        10158,
+        9370,
+        10783,
     ],
     "pawapuro-kun": [
-        13894,
-        15270,
-        14190,
-        12922,
-        13442,
-        13258,
+        9925,
+        11436,
+        9675,
+        10624,
+        10403,
+        9525,
+        10064,
     ],
     "bomberman": [
-        12194,
-        15874,
-        11586,
+        11326,
+        8672,
+        9028,
+        9128,
+        11889,
+        10743,
+        11259,
     ],
     "twinbee": [
-        19802,
-        17414,
-        16094,
-        14774,
-        11694,
-        17250,
+        11062,
+        8752,
+        12919,
+        14834,
+        12053,
     ],
 }
 
@@ -90,7 +101,7 @@ class KonamiCaptcha:
             "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
         )
         options.add_argument("--log-level=0")
-        options.add_argument("--headless")
+        # options.add_argument("--headless")
         options.add_argument("--disable-blink-features=AutomationControlled")
         service = Service(log_path=os.devnull)
 
@@ -141,70 +152,91 @@ class KonamiCaptcha:
                 )
             )
 
-            self.driver.find_element(By.ID, "login-form-password").send_keys(
-                self.password
-            )
+            while True:
+                self.driver.find_element(By.ID, "login-form-password").send_keys(
+                    self.password
+                )
 
-            script = """
-                const img = arguments[0];
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = img.naturalWidth;
-                canvas.height = img.naturalHeight;
-                ctx.drawImage(img, 0, 0);
-                return canvas.toDataURL('image/png').length;
-            """
+                script = """
+                    const img = arguments[0];
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.naturalWidth;
+                    canvas.height = img.naturalHeight;
+                    ctx.drawImage(img, 0, 0);
+                    return atob(canvas.toDataURL("image/png").split(",")[1]).length;
+                """
 
-            imageSize = self.driver.execute_script(
-                script,
-                self.driver.find_element(By.ID, "captcha-correct-picture"),
-            )
-
-            group = ""
-            for group in captchaGroups.keys():
-                if int(imageSize) in captchaGroups[group]:
-                    break
-
-            print(group)
-
-            captchaAnswers = ""
-
-            elements = self.driver.find_elements(
-                By.CLASS_NAME, "Captcha_goemon__test--default__bPle8.col-sm-2.col-4"
-            )
-
-            for index in range(0, 5):
                 imageSize = self.driver.execute_script(
                     script,
-                    self.driver.find_element(By.ID, f"captcha-test-picture-{index}"),
+                    self.driver.find_element(By.ID, "captcha-correct-picture"),
                 )
-                if int(imageSize) in captchaGroups[group]:
-                    captchaAnswers += "1"
-                    self.action.move_to_element(elements[index]).click().perform()
-                else:
-                    captchaAnswers += "0"
+                print(imageSize)
 
-            login_button = self.driver.find_element(By.ID, "login-form-login-button-id")
-            self.action.move_to_element(login_button).click().perform()
+                group = ""
+                for __group in captchaGroups.keys():
+                    if int(imageSize) in captchaGroups[__group]:
+                        group = __group
+                        break
 
-            time.sleep(1)
-            if (
-                "ログイン出来ません。入力したログインIDとパスワードをご確認ください。"
-                in self.driver.find_element(By.TAG_NAME, "body").text
-            ):
-                raise LoginFailed(
-                    "ログイン出来ません。入力したログインIDとパスワードをご確認ください。"
+                print(group)
+
+                captchaAnswers = ""
+
+                elements = self.driver.find_elements(
+                    By.CLASS_NAME, "Captcha_goemon__test--default__bPle8.col-sm-2.col-4"
                 )
 
-            try:
-                WebDriverWait(self.driver, 30).until(
-                    EC.text_to_be_present_in_element(
-                        (By.TAG_NAME, "body"),
-                        "送信されたメールに記載されている6桁の「確認コード」を入力してください。",
+                print(captchaGroups[group])
+                for index in range(0, 5):
+                    imageSize = self.driver.execute_script(
+                        script,
+                        self.driver.find_element(
+                            By.ID, f"captcha-test-picture-{index}"
+                        ),
                     )
+                    print(imageSize)
+                    if int(imageSize) in captchaGroups[group]:
+                        captchaAnswers += "1"
+                        self.action.move_to_element(elements[index]).click().perform()
+                        time.sleep(1)
+                    else:
+                        captchaAnswers += "0"
+
+                print(captchaAnswers)
+                login_button = self.driver.find_element(
+                    By.ID, "login-form-login-button-id"
                 )
-            except:
-                raise LoginFailed(self.driver.find_element(By.TAG_NAME, "body").text)
+                self.action.move_to_element(login_button).click().perform()
+
+                time.sleep(1)
+                if (
+                    "画像認証が認証されませんでした。"
+                    in self.driver.find_element(By.TAG_NAME, "body").text
+                ):
+                    time.sleep(3)
+                    continue
+
+                if (
+                    "ログイン出来ません。入力したログインIDとパスワードをご確認ください。"
+                    in self.driver.find_element(By.TAG_NAME, "body").text
+                ):
+                    raise LoginFailed(
+                        "ログイン出来ません。入力したログインIDとパスワードをご確認ください。"
+                    )
+
+                try:
+                    WebDriverWait(self.driver, 30).until(
+                        EC.text_to_be_present_in_element(
+                            (By.TAG_NAME, "body"),
+                            "送信されたメールに記載されている6桁の「確認コード」を入力してください。",
+                        )
+                    )
+                    break
+                except:
+                    raise LoginFailed(
+                        self.driver.find_element(By.TAG_NAME, "body").text
+                    )
 
             self.mfa = True
 
@@ -254,4 +286,5 @@ class KonamiCaptcha:
             except:
                 raise LoginFailed(self.driver.find_element(By.TAG_NAME, "body").text)
         cookies = self.driver.get_cookies()
+        self.driver.close()
         return cookies
