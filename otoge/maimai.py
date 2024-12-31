@@ -379,7 +379,7 @@ class MaiMaiClient:
                 .text
             )
             name = cardElement.select_one("div[class='name_block f_l f_16']").text
-            iconUrl = cardElement.select_one("div[class='w_112 f_l']").attrs.get("src")
+            iconUrl = cardElement.select_one("img[class='w_112 f_l']").attrs.get("src")
 
             card = MaiMaiAime(
                 idx=idx,
