@@ -126,7 +126,7 @@ class KonamiCaptcha:
             raise LoginFailed("制限がかけられています")
 
         try:
-            button = WebDriverWait(self.driver, 30).until(
+            button = WebDriverWait(self.driver, 60).until(
                 EC.element_to_be_clickable((By.ID, "onetrust-accept-btn-handler"))
             )
             time.sleep(1)
@@ -140,7 +140,7 @@ class KonamiCaptcha:
             )
             self.action.move_to_element(login_button).click().perform()
 
-            button = WebDriverWait(self.driver, 30).until(
+            button = WebDriverWait(self.driver, 60).until(
                 EC.element_to_be_clickable(
                     (By.ID, "passkey-code-confirmation-code-issue-button-id")
                 )
@@ -148,7 +148,7 @@ class KonamiCaptcha:
             self.action.move_to_element(button).click().perform()
             self.mfa = False
         except:
-            WebDriverWait(self.driver, 30).until(
+            WebDriverWait(self.driver, 60).until(
                 EC.text_to_be_present_in_element(
                     (By.TAG_NAME, "body"), "すべてチェックしてください。"
                 )
@@ -228,7 +228,7 @@ class KonamiCaptcha:
                     )
 
                 try:
-                    WebDriverWait(self.driver, 30).until(
+                    WebDriverWait(self.driver, 60).until(
                         EC.text_to_be_present_in_element(
                             (By.TAG_NAME, "body"),
                             "送信されたメールに記載されている6桁の「確認コード」を入力してください。",
@@ -258,7 +258,7 @@ class KonamiCaptcha:
                 raise LoginFailed("入力した確認コードが正しくありません。")
 
             try:
-                WebDriverWait(self.driver, 30).until(
+                WebDriverWait(self.driver, 60).until(
                     EC.text_to_be_present_in_element(
                         (By.TAG_NAME, "body"), "マイページ"
                     )
@@ -280,7 +280,7 @@ class KonamiCaptcha:
                 raise LoginFailed("入力した確認コードが正しくありません。")
 
             try:
-                WebDriverWait(self.driver, 30).until(
+                WebDriverWait(self.driver, 60).until(
                     EC.text_to_be_present_in_element(
                         (By.TAG_NAME, "body"), "マイページ"
                     )
