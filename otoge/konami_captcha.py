@@ -124,7 +124,7 @@ class KonamiCaptcha:
             raise LoginFailed("制限がかけられています")
 
         try:
-            button = WebDriverWait(self.driver, 10).until(
+            button = WebDriverWait(self.driver, 30).until(
                 EC.element_to_be_clickable((By.ID, "onetrust-accept-btn-handler"))
             )
             time.sleep(1)
@@ -138,7 +138,7 @@ class KonamiCaptcha:
             )
             self.action.move_to_element(login_button).click().perform()
 
-            button = WebDriverWait(self.driver, 10).until(
+            button = WebDriverWait(self.driver, 30).until(
                 EC.element_to_be_clickable(
                     (By.ID, "passkey-code-confirmation-code-issue-button-id")
                 )
@@ -146,9 +146,7 @@ class KonamiCaptcha:
             self.action.move_to_element(button).click().perform()
             self.mfa = False
         except:
-            print(self.driver.find_element(By.TAG_NAME, "body").text)
-
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, 30).until(
                 EC.text_to_be_present_in_element(
                     (By.TAG_NAME, "body"), "すべてチェックしてください。"
                 )
