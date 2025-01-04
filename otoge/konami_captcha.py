@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
-from typing import List
+from typing import List, Optional
 from .exceptions import *
 
 __all__ = ("KonamiCaptcha",)
@@ -94,7 +94,7 @@ captchaGroups = {
 
 
 class KonamiCaptcha:
-    def __init__(self):
+    def __init__(self, proxy: Optional[str] = None):
         # Set up Chrome options and Selenium WebDriver
         options = Options()
         options.add_argument(
@@ -105,6 +105,8 @@ class KonamiCaptcha:
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--no-sandbox")
+        if proxy is not None:
+            options.add_argument(f"--proxy-server={proxy}")
         service = Service(log_path=os.devnull)
 
         self.driver = webdriver.Chrome(service=service, options=options)

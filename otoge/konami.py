@@ -19,10 +19,16 @@ class KonamiClient:
         "konami",
     )
 
-    def __init__(self, logger: logging.Logger, http: AsyncClient):
+    def __init__(
+        self,
+        logger: logging.Logger,
+        http: AsyncClient,
+        *,
+        proxy: Optional[str] = None,
+    ):
         self.logger = logger
         self.http = http
-        self.konami = KonamiCaptcha()
+        self.konami = KonamiCaptcha(proxy)
 
     async def loginWithID(
         self,

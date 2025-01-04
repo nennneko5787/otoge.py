@@ -89,7 +89,13 @@ class POPNClient:
         "profile",
     )
 
-    def __init__(self, *, logger: logging.Logger = None, skipKonami: bool = False):
+    def __init__(
+        self,
+        *,
+        logger: logging.Logger = None,
+        skipKonami: bool = False,
+        proxyForCaptcha: Optional[str] = None,
+    ):
         if logger is None:
             self.__setupLogger()
         else:
@@ -97,7 +103,7 @@ class POPNClient:
         self.http = AsyncClient(follow_redirects=True, verify=False)
         self.profile: POPNProfile = None
         if not skipKonami:
-            self.konami = KonamiClient(logger, self.http)
+            self.konami = KonamiClient(logger, self.http, proxy=proxyForCaptcha)
 
     def __setupLogger(self):
         level = logging.INFO
