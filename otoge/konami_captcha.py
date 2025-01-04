@@ -125,7 +125,7 @@ class KonamiCaptcha:
         if "制限されています" in self.driver.find_element(By.TAG_NAME, "body").text:
             raise LoginFailed("制限がかけられています")
 
-        self.driver.find_element(By.TAG_NAME, "body").text
+        print(self.driver.find_element(By.TAG_NAME, "body").text)
         try:
             button = WebDriverWait(self.driver, 60).until(
                 EC.element_to_be_clickable((By.ID, "onetrust-accept-btn-handler"))
