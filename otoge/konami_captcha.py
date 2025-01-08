@@ -105,8 +105,8 @@ class KonamiCaptcha:
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--no-sandbox")
-        options.add_argument("--accept-lang ja")
-        options.add_argument("--lang ja")
+        options.add_argument("--accept-lang=ja")
+        options.add_argument("--lang=ja")
         if proxy is not None:
             options.add_argument(f"--proxy-server={proxy}")
         service = Service(log_path=os.devnull)
