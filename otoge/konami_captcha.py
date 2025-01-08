@@ -105,6 +105,8 @@ class KonamiCaptcha:
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--no-sandbox")
+        options.add_argument("--accept-lang ja")
+        options.add_argument("--lang ja")
         if proxy is not None:
             options.add_argument(f"--proxy-server={proxy}")
         service = Service(log_path=os.devnull)
@@ -127,7 +129,9 @@ class KonamiCaptcha:
         if "制限されています" in self.driver.find_element(By.TAG_NAME, "body").text:
             raise LoginFailed("制限がかけられています")
 
-        print(self.driver.find_element(By.TAG_NAME, "body").text)
+        if "403" in self.driver.find_element(By.TAG_NAME, "body").text:
+            raise LoginFailed("403")
+
         try:
             button = WebDriverWait(self.driver, 60).until(
                 EC.element_to_be_clickable((By.ID, "onetrust-accept-btn-handler"))

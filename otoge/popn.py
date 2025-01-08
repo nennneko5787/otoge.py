@@ -152,6 +152,7 @@ class POPNClient:
             "https://p.eagate.573.jp/game/popn/jamfizz/playdata/index.html"
         )
         html = response.text
+        print(html)
         soup = BeautifulSoup(html, "html.parser")
         elements = soup.select_one("div[class='st_box']").select("div[class='item_st']")
         name = elements[0].get_text(strip=True)
