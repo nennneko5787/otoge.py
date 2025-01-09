@@ -1,5 +1,6 @@
 from .maimai import *
 from .popn import *
+from .paseli import *
 from .konami import *
 
 from .utils import *

@@ -127,9 +127,11 @@ class KonamiCaptcha:
 
         time.sleep(1)
         if "制限されています" in self.driver.find_element(By.TAG_NAME, "body").text:
+            self.driver.close()
             raise LoginFailed("制限がかけられています")
 
         if "403" in self.driver.find_element(By.TAG_NAME, "body").text:
+            self.driver.close()
             raise LoginFailed("403")
 
         try:
@@ -181,7 +183,7 @@ class KonamiCaptcha:
                     self.driver.find_element(By.ID, "captcha-correct-picture"),
                 )
 
-                group = ""
+                group = "ebisumaru"
                 for __group in captchaGroups.keys():
                     if int(imageSize) in captchaGroups[__group]:
                         group = __group
@@ -224,6 +226,7 @@ class KonamiCaptcha:
                     "ログイン出来ません。入力したログインIDとパスワードをご確認ください。"
                     in self.driver.find_element(By.TAG_NAME, "body").text
                 ):
+                    self.driver.close()
                     raise LoginFailed(
                         "ログイン出来ません。入力したログインIDとパスワードをご確認ください。"
                     )
@@ -237,6 +240,7 @@ class KonamiCaptcha:
                     )
                     break
                 except:
+                    self.driver.close()
                     raise LoginFailed(
                         self.driver.find_element(By.TAG_NAME, "body").text
                     )

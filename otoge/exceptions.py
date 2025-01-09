@@ -3,6 +3,9 @@ __all__ = (
     "LoginFailed",
     "WrongFormat",
     "RequestFailed",
+    "RequiresCardRegistration",
+    "RequiresPlayData",
+    "RequiresPremium",
 )
 
 
@@ -19,6 +22,14 @@ class WrongFormat(Exception):
 
 
 class RequestFailed(Exception):
+    pass
+
+
+class RequiresCardRegistration(Exception):
+    pass
+
+
+class RequiresPlayData(Exception):
     pass
 
 

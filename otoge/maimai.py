@@ -15,6 +15,9 @@ __all__ = (
     "MaiMaiClient",
     "MaiMaiAime",
     "MaiMaiPlayRecord",
+    "MaiMaiJudge",
+    "MaiMaiTourMember",
+    "MaiMaiDetail",
 )
 
 
@@ -30,11 +33,11 @@ class MaiMaiJudge:
     )
 
     judgeType: Literal["tap", "hold", "slide", "touch", "break"]
-    criticalPerfects: Optional[int]
-    perfects: Optional[int]
-    greats: Optional[int]
-    goods: Optional[int]
-    misses: Optional[int]
+    criticalPerfects: int
+    perfects: int
+    greats: int
+    goods: int
+    misses: int
 
 
 class MaiMaiPlayRecord:
@@ -153,31 +156,31 @@ class MaiMaiPlayRecord:
             if criticalPerfects != "":
                 criticalPerfects = int(criticalPerfects)
             else:
-                criticalPerfects = None
+                criticalPerfects = 0
 
             perfects = _judges[1].get_text(strip=True)
             if perfects != "":
                 perfects = int(perfects)
             else:
-                perfects = None
+                perfects = 0
 
             greats = _judges[2].get_text(strip=True)
             if greats != "":
                 greats = int(greats)
             else:
-                greats = None
+                greats = 0
 
             goods = _judges[3].get_text(strip=True)
             if goods != "":
                 goods = int(goods)
             else:
-                goods = None
+                goods = 0
 
             misses = _judges[4].get_text(strip=True)
             if misses != "":
                 misses = int(misses)
             else:
-                misses = None
+                misses = 0
             judges.append(
                 MaiMaiJudge(
                     judgeType=judgeType[i],
@@ -207,7 +210,7 @@ class MaiMaiPlayRecord:
                 ).get_text(strip=True)[2:]
             )
             tourMembers.append(
-                MaimaiTourMember(level=level, stars=stars, iconUrl=iconUrl)
+                MaiMaiTourMember(level=level, stars=stars, iconUrl=iconUrl)
             )
 
         placeName = (
@@ -228,7 +231,7 @@ class MaiMaiPlayRecord:
 
 
 @dataclass
-class MaimaiTourMember:
+class MaiMaiTourMember:
     level: int
     stars: int
     iconUrl: str
@@ -242,7 +245,7 @@ class MaiMaiDetail:
     maxCombo: str
     maxSync: str
     judges: List[MaiMaiJudge]
-    tourMembers: List[MaimaiTourMember]
+    tourMembers: List[MaiMaiTourMember]
     placeName: str
 
 

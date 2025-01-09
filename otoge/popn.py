@@ -15,7 +15,12 @@ from .exceptions import *
 from .enum import *
 from .utils import *
 
-__all__ = ("POPNClient",)
+__all__ = (
+    "POPNClient",
+    "POPNProfile",
+    "POPNCharacter",
+    "POPNPlayRecord",
+)
 
 
 @dataclass
@@ -144,15 +149,32 @@ class POPNClient:
     @copydoc(KonamiClient.enterCode)
     async def enterCode(
         self, code: str, *, loop: Optional[asyncio.AbstractEventLoop] = None
-    ) -> POPNProfile:
+    ):
         await self.konami.enterCode(code, loop=loop)
 
     async def fetchProfile(self) -> POPNProfile:
         response = await self.http.get(
             "https://p.eagate.573.jp/game/popn/jamfizz/playdata/index.html"
         )
+        if (
+            response.url
+            == "https://p.eagate.573.jp/game/popn/jamfizz/error/index.html?err=2"
+        ):
+            raise RequiresCardRegistration("★e-amusement passが登録されていません★")
+        if (
+            response.url
+            == "https://p.eagate.573.jp/game/popn/jamfizz/error/index.html?err=3"
+        ):
+            raise RequiresPlayData(
+                "★このコンテンツの閲覧には『pop'n music Jam&Fizz』のプレーデータが必要です。★"
+            )
+        if (
+            response.url
+            == "https://p.eagate.573.jp/game/popn/jamfizz/error/index.html?err=4"
+        ):
+            raise RequestFailed("★ただいまこのページは表示出来ません｡★")
+
         html = response.text
-        print(html)
         soup = BeautifulSoup(html, "html.parser")
         elements = soup.select_one("div[class='st_box']").select("div[class='item_st']")
         name = elements[0].get_text(strip=True)
