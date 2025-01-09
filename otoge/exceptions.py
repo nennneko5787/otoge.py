@@ -20,3 +20,7 @@ class WrongFormat(Exception):
 
 class RequestFailed(Exception):
     pass
+
+
+class RequiresPremium(Exception):
+    pass

@@ -95,7 +95,6 @@ captchaGroups = {
 
 class KonamiCaptcha:
     def __init__(self, proxy: Optional[str] = None):
-        # Set up Chrome options and Selenium WebDriver
         options = Options()
         options.add_argument(
             "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
@@ -105,6 +104,7 @@ class KonamiCaptcha:
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--no-sandbox")
+        # 日本語じゃないと機能しない
         options.add_argument("--accept-lang=ja")
         options.add_argument("--lang=ja")
         if proxy is not None:
@@ -180,7 +180,6 @@ class KonamiCaptcha:
                     script,
                     self.driver.find_element(By.ID, "captcha-correct-picture"),
                 )
-                print(imageSize)
 
                 group = ""
                 for __group in captchaGroups.keys():
@@ -188,15 +187,12 @@ class KonamiCaptcha:
                         group = __group
                         break
 
-                print(group)
-
                 captchaAnswers = ""
 
                 elements = self.driver.find_elements(
                     By.CLASS_NAME, "Captcha_goemon__test--default__bPle8.col-sm-2.col-4"
                 )
 
-                print(captchaGroups[group])
                 for index in range(0, 5):
                     imageSize = self.driver.execute_script(
                         script,
@@ -204,7 +200,6 @@ class KonamiCaptcha:
                             By.ID, f"captcha-test-picture-{index}"
                         ),
                     )
-                    print(imageSize)
                     if int(imageSize) in captchaGroups[group]:
                         captchaAnswers += "1"
                         self.action.move_to_element(elements[index]).click().perform()
@@ -212,7 +207,6 @@ class KonamiCaptcha:
                     else:
                         captchaAnswers += "0"
 
-                print(captchaAnswers)
                 login_button = self.driver.find_element(
                     By.ID, "login-form-login-button-id"
                 )
