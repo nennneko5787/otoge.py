@@ -100,7 +100,8 @@ class KonamiCaptcha:
             "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
         )
         options.add_argument("--log-level=0")
-        options.add_argument("--headless")
+        # options.add_argument("--headless")
+        # options.add_argument("--disable-gpu")
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--no-sandbox")
@@ -112,20 +113,21 @@ class KonamiCaptcha:
         service = Service(log_path=os.devnull)
 
         self.driver = webdriver.Chrome(service=service, options=options)
-        self.driver.set_window_size(1366, 768)
-        self.driver.get("https://p.eagate.573.jp/")
+        self.driver.set_window_size(1920, 1080)
 
         self.mfa = False
         self.action = ActionChains(self.driver)
+
+        self.wait = WebDriverWait(driver=self.driver, timeout=5)
 
     def login(self, konamiId: str, password: str):
         self.konamiId = konamiId
         self.password = password
 
-        self.driver.get("https://p.eagate.573.jp/")
         self.driver.get("https://p.eagate.573.jp/gate/p/login.html")
 
-        time.sleep(1)
+        self.wait.until(EC.presence_of_all_elements_located)
+
         if "制限されています" in self.driver.find_element(By.TAG_NAME, "body").text:
             self.driver.close()
             raise LoginFailed("制限がかけられています")
@@ -135,29 +137,32 @@ class KonamiCaptcha:
             raise LoginFailed("403")
 
         try:
-            button = WebDriverWait(self.driver, 60).until(
+            button = self.wait.until(
                 EC.element_to_be_clickable((By.ID, "onetrust-accept-btn-handler"))
             )
-            time.sleep(1)
-            self.action.move_to_element(button).click().perform()
+            button.click()
+            # self.action.move_to_element(button).click().perform()
 
             self.driver.find_element(By.ID, "login-select-form-id").send_keys(
                 self.konamiId
             )
+
             login_button = self.driver.find_element(
                 By.ID, "login-select-form-login-button-id"
             )
-            self.action.move_to_element(login_button).click().perform()
+            login_button.click()
+            # self.action.move_to_element(login_button).click().perform()
 
-            button = WebDriverWait(self.driver, 60).until(
+            button = self.wait.until(
                 EC.element_to_be_clickable(
                     (By.ID, "passkey-code-confirmation-code-issue-button-id")
                 )
             )
-            self.action.move_to_element(button).click().perform()
+            button.click()
+            # self.action.move_to_element(button).click().perform()
             self.mfa = False
         except:
-            WebDriverWait(self.driver, 60).until(
+            self.wait.until(
                 EC.text_to_be_present_in_element(
                     (By.TAG_NAME, "body"), "すべてチェックしてください。"
                 )
@@ -205,7 +210,6 @@ class KonamiCaptcha:
                     if int(imageSize) in captchaGroups[group]:
                         captchaAnswers += "1"
                         self.action.move_to_element(elements[index]).click().perform()
-                        time.sleep(1)
                     else:
                         captchaAnswers += "0"
 
@@ -214,12 +218,10 @@ class KonamiCaptcha:
                 )
                 self.action.move_to_element(login_button).click().perform()
 
-                time.sleep(1)
                 if (
                     "画像認証が認証されませんでした。"
                     in self.driver.find_element(By.TAG_NAME, "body").text
                 ):
-                    time.sleep(3)
                     continue
 
                 if (
@@ -232,7 +234,7 @@ class KonamiCaptcha:
                     )
 
                 try:
-                    WebDriverWait(self.driver, 60).until(
+                    self.wait.until(
                         EC.text_to_be_present_in_element(
                             (By.TAG_NAME, "body"),
                             "送信されたメールに記載されている6桁の「確認コード」を入力してください。",
@@ -253,9 +255,9 @@ class KonamiCaptcha:
             submit_button = self.driver.find_element(
                 By.ID, "passkey-login-complete-redirect-button-id"
             )
-            self.action.move_to_element(submit_button).click().perform()
+            submit_button.click()
+            # self.action.move_to_element(submit_button).click().perform()
 
-            time.sleep(1)
             if (
                 "入力した確認コードが正しくありません。"
                 in self.driver.find_element(By.TAG_NAME, "body").text
@@ -263,7 +265,7 @@ class KonamiCaptcha:
                 raise LoginFailed("入力した確認コードが正しくありません。")
 
             try:
-                WebDriverWait(self.driver, 60).until(
+                self.wait.until(
                     EC.text_to_be_present_in_element(
                         (By.TAG_NAME, "body"), "マイページ"
                     )
@@ -277,7 +279,6 @@ class KonamiCaptcha:
             )
             self.action.move_to_element(submit_button).click().perform()
 
-            time.sleep(1)
             if (
                 "入力した確認コードが正しくありません。"
                 in self.driver.find_element(By.TAG_NAME, "body").text
@@ -285,7 +286,7 @@ class KonamiCaptcha:
                 raise LoginFailed("入力した確認コードが正しくありません。")
 
             try:
-                WebDriverWait(self.driver, 60).until(
+                self.wait.until(
                     EC.text_to_be_present_in_element(
                         (By.TAG_NAME, "body"), "マイページ"
                     )
