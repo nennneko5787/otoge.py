@@ -1,6 +1,6 @@
 # otoge.py
 
-ゲキチュウマイ(パスワードでログイン可)、BEMANI(クッキーログインのみ)のプレイ履歴やその他諸々を取得・変更する Python ライブラリ。非同期操作(asyncio)のみをサポートしています。
+ゲキチュウマイ、BEMANI のプレイ履歴やその他諸々を取得・変更する Python ライブラリ。非同期操作(asyncio)のみをサポートしています。
 
 > [!Warning]
 > このライブラリを使用して起きた損害についてライブラリ作成者の[nennneko5787](https://x.com/Fng1Bot)は一切責任を負いません。
@@ -10,19 +10,30 @@
 ### ゲキチュウマイ (SEGA)
 
 - [ ] CHUNITHM
-- [x] maimai
+- [x] maimai でらっくす
   - プロフィール閲覧
   - プレイ履歴閲覧
+    - 詳細を取得することができます(別途関数の実行が必要)
   - ユーザーネーム変更
 - [ ] オンゲキ
 
-### BEMANI (KONAMI)
+### KONAMI
 
 - [x] pop'n music
   - プロフィール閲覧
   - プレイ履歴閲覧
+    - 詳細の取得にはまだ対応していません
 - [ ] beatmania
 - [ ] SOUND VORTEX
+- [x] ノスタルジア
+  - プロフィール閲覧
+  - プレイ履歴閲覧
+    - maimai でらっくすとは異なり、最初から判定データが入っています
+- [x] ポラリスコード
+  - プロフィール閲覧
+    - 最後に遊んだ店名の取得に対応
+  - プレイ履歴閲覧
+    - maimai でらっくすとは異なり、最初から判定データが入っています
 
 ## お願い
 
@@ -39,7 +50,8 @@
 - httpx
 - beautifulsoup4
 - selenium
-- tls-client
+- python-dateutil
+- tzdata
 
 ```bash
 # development builds
@@ -48,77 +60,6 @@ pip install git+https://github.com/nennneko5787/otoge.py
 pip install otoge.py
 ```
 
-### maimai
+## examples
 
-サンプルコード
-
-```python
-import asyncio
-
-from otoge import MaiMaiClient
-
-maimai = MaiMaiClient()
-
-
-async def main():
-    cards = await maimai.login("<SEGA ID>", "<PASSWORD>")
-    card = cards[0] # カードは配列になっているので、カードが1枚しかない場合はインデックスでログイン、カードが2枚以上ある場合はforループを回してカードを探す
-    await card.select()
-    print(f"logined as {card.name}")
-    records = await card.record()
-    for record in records:
-        print(
-            f"{record.name} [{record.difficult} / {record.playedAt}]: {record.scoreRank} ({record.percentage})"
-        )
-
-
-asyncio.run(main())
-
-```
-
-### pop'n music
-
-#### Login With KONAMI ID
-
-```python
-import asyncio
-
-from otoge import POPNClient
-
-popn = POPNClient(skipKonami=False)
-
-
-async def main():
-    await popn.loginWithID("<KONAMI ID>", "<PASSWORD>")
-    code = input("Enter Code: ")
-    await popn.enterCode(code)
-    print(await popn.fetchProfile())
-
-
-asyncio.run(main())
-
-```
-
-#### Login With Cookie
-
-```python
-import asyncio
-import json as JSON
-
-from otoge import POPNClient
-
-popn = POPNClient(skipKonami=True)
-
-
-async def main():
-    # popn.http.cookies または popn.konami.http.cookies で抽出できます
-    with open("cookies.json") as f:
-        data = f.read()
-    cookies = json.loads(data)
-    await popn.loginWithCookie(cookies)
-    print(await popn.fetchProfile())
-
-
-asyncio.run(main())
-
-```
+[example フォルダー](/example)にサンプルが入っています。
