@@ -168,11 +168,11 @@ class KonamiCaptcha:
                 )
             )
 
-            self.driver.find_element(By.ID, "login-form-password").send_keys(
-                self.password
-            )
-
             while True:
+                self.driver.find_element(By.ID, "login-form-password").send_keys(
+                    self.password
+                )
+
                 script = """
                     const img = arguments[0];
                     const canvas = document.createElement('canvas');
