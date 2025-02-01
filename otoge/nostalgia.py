@@ -21,6 +21,7 @@ __all__ = (
     "NostalgiaProfile",
     "NostalgiaDifficulty",
     "NostalgiaJudge",
+    "NostalgiaPlayRecord",
 )
 
 
@@ -76,7 +77,7 @@ class NostalgiaPlayRecord:
     maxCombo: int
     rank: str
     isOneHand: bool
-    judge: NostalgiaJudge
+    judges: NostalgiaJudge
     playedAt: datetime
 
 
@@ -194,7 +195,7 @@ class NostalgiaClient:
                     rank=music["rank"],
                     isOneHand=music["is_onehand"],
                     maxCombo=music["max_combo"],
-                    judge=NostalgiaJudge(
+                    judges=NostalgiaJudge(
                         perfectJust=music["judge_count"][0],
                         just=music["judge_count"][1],
                         good=music["judge_count"][2],
