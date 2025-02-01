@@ -118,7 +118,7 @@ class KonamiCaptcha:
         self.mfa = False
         self.action = ActionChains(self.driver)
 
-        self.wait = WebDriverWait(driver=self.driver, timeout=5)
+        self.wait = WebDriverWait(driver=self.driver, timeout=60)
 
     def login(self, konamiId: str, password: str):
         self.konamiId = konamiId
@@ -242,10 +242,9 @@ class KonamiCaptcha:
                     )
                     break
                 except:
+                    text = self.driver.find_element(By.TAG_NAME, "body").text
                     self.driver.close()
-                    raise LoginFailed(
-                        self.driver.find_element(By.TAG_NAME, "body").text
-                    )
+                    raise LoginFailed(text)
 
             self.mfa = True
 
