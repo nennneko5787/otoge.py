@@ -21,17 +21,8 @@ __all__ = (
 )
 
 
-@dataclass
+@dataclass(slots=True)
 class MaiMaiJudge:
-    __slots__ = (
-        "judgeType",
-        "criticalPerfects",
-        "perfects",
-        "greats",
-        "goods",
-        "misses",
-    )
-
     judgeType: Literal["tap", "hold", "slide", "touch", "break"]
     criticalPerfects: int
     perfects: int
@@ -230,14 +221,14 @@ class MaiMaiPlayRecord:
         )
 
 
-@dataclass
+@dataclass(slots=True)
 class MaiMaiTourMember:
     level: int
     stars: int
     iconUrl: str
 
 
-@dataclass
+@dataclass(slots=True)
 class MaiMaiDetail:
     record: MaiMaiPlayRecord
     fast: int

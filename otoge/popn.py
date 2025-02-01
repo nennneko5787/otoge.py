@@ -23,18 +23,9 @@ __all__ = (
 )
 
 
-@dataclass
+@dataclass(slots=True)
 class POPNPlayRecord:
     """maimaiのプレイ履歴"""
-
-    __slots__ = (
-        "name",
-        "easyScore",
-        "normalScore",
-        "hyperScore",
-        "exScore",
-        "gameType",
-    )
 
     name: str
     easyScore: Optional[int]
@@ -44,35 +35,17 @@ class POPNPlayRecord:
     gameType: GameType
 
 
-@dataclass
+@dataclass(slots=True)
 class POPNCharacter:
     """pop'n music のキャラクター"""
-
-    __slots__ = (
-        "name",
-        "iconUrl",
-    )
 
     name: str
     iconUrl: str
 
 
-@dataclass
+@dataclass(slots=True)
 class POPNProfile:
     """pop'n music のプロフィール"""
-
-    __slots__ = (
-        "name",
-        "friendId",
-        "usedCharacters",
-        "extraLampLevel",
-        "normalModePlayCount",
-        "battleModePlayCount",
-        "localModePlayCount",
-        "lastPlayedAt",
-        "bannerUrl",
-        "records",
-    )
 
     name: str
     friendId: str
@@ -127,14 +100,14 @@ class POPNClient:
         self.logger.setLevel(level)
         self.logger.addHandler(handler)
 
-    async def loginWithCookie(self, cookies: List[dict]):
+    def loginWithCookie(self, cookies: List[dict]):
         """クッキーを使用しKonami IDにログインします。
 
         Args:
             cookies (List[dict]): 保存したクッキー。
         """
         for cookie in cookies:
-            self.http.cookies.set(cookie["name"], cookie["value"])
+            self.http.cookies.set(cookie["name"], cookie["value"], ".573.jp")
 
     @copydoc(KonamiClient.loginWithID)
     async def loginWithID(

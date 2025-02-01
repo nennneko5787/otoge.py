@@ -21,15 +21,9 @@ __all__ = (
 )
 
 
-@dataclass
+@dataclass(slots=True)
 class PASELIBalance:
     """PASELI残高"""
-
-    __slots__ = (
-        "balance",
-        "balanceExpiresAt",
-        "point",
-    )
 
     balance: int
     balanceExpiresAt: datetime
