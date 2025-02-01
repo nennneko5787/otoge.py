@@ -118,7 +118,7 @@ class KonamiCaptcha:
         self.mfa = False
         self.action = ActionChains(self.driver)
 
-        self.wait = WebDriverWait(driver=self.driver, timeout=60)
+        self.wait = WebDriverWait(driver=self.driver, timeout=10)
 
     def login(self, konamiId: str, password: str):
         self.konamiId = konamiId
@@ -218,10 +218,13 @@ class KonamiCaptcha:
                 )
                 self.action.move_to_element(login_button).click().perform()
 
-                if (
-                    "画像認証が認証されませんでした。"
-                    in self.driver.find_element(By.TAG_NAME, "body").text
-                ):
+                try:
+                    self.wait.until_not(
+                        EC.text_to_be_present_in_element(
+                            (By.TAG_NAME, "body"), "画像認証が認証されませんでした。"
+                        )
+                    )
+                except:
                     continue
 
                 if (
