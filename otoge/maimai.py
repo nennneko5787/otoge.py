@@ -31,66 +31,27 @@ class MaiMaiJudge:
     misses: int
 
 
+@classmethod
 class MaiMaiPlayRecord:
     """maimaiのプレイ履歴"""
 
-    __slots__ = (
-        "name",
-        "http",
-        "percentage",
-        "percentageIsNewRecord",
-        "deluxeScore",
-        "deluxeScoreIsNewRecord",
-        "playedAt",
-        "sync",
-        "track",
-        "cleared",
-        "fullCombo",
-        "jacketUrl",
-        "gameType",
-        "scoreRank",
-        "difficult",
-        "idx",
-        "logger",
-    )
-
-    def __init__(
-        self,
-        name: str,
-        http: AsyncClient,
-        percentage: Optional[str] = None,
-        percentageIsNewRecord: bool = False,
-        deluxeScore: Optional[str] = None,
-        deluxeScoreIsNewRecord: bool = False,
-        playedAt: Optional[datetime] = None,
-        sync: bool = False,
-        track: Optional[str] = None,
-        cleared: bool = False,
-        fullCombo: bool = False,
-        jacketUrl: Optional[str] = None,
-        gameType: Optional[GameType] = None,
-        scoreRank: Optional[str] = None,
-        difficult: Optional[str] = None,
-        idx: Optional[str] = None,
-        logger: logging.Logger = None,
-    ):
-        self.name: str = name
-        self.http: AsyncClient = http
-        self.percentage: Optional[str] = percentage
-        self.percentageIsNewRecord: bool = percentageIsNewRecord
-        self.deluxeScore: Optional[str] = deluxeScore
-        self.deluxeScoreIsNewRecord: bool = deluxeScoreIsNewRecord
-        self.playedAt: Optional[datetime] = playedAt
-        self.sync: bool = sync
-        self.track: Optional[str] = track
-        self.cleared: bool = cleared
-        self.fullCombo: bool = fullCombo
-        self.jacketUrl: Optional[str] = jacketUrl
-        self.gameType: Optional[GameType] = gameType
-        self.scoreRank: Optional[str] = scoreRank
-        self.difficult: Optional[str] = difficult
-        self.idx: Optional[str] = idx
-        self.logger: logging.Logger = logger
+    name: str
+    http: AsyncClient
+    percentage: Optional[str]
+    percentageIsNewRecord: bool
+    deluxeScore: Optional[str]
+    deluxeScoreIsNewRecord: bool
+    playedAt: Optional[datetime]
+    sync: bool
+    track: Optional[str]
+    cleared: bool
+    fullCombo: bool
+    jacketUrl: Optional[str]
+    gameType: Optional[GameType]
+    scoreRank: Optional[str]
+    difficult: Optional[str]
+    idx: Optional[str]
+    logger: logging.Logger
 
     async def fetchDetail(self):
         response = await self.http.get(

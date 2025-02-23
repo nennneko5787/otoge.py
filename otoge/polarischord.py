@@ -51,6 +51,7 @@ class PolarisChordDifficultyType(enum.Enum):
 
 
 class PolarisChordClearStatus(enum.Enum):
+    GOODTRY = 1
     SUCCESS = 2
     FULLCOMBO = 3
     PERFECT = 4
