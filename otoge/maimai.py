@@ -31,7 +31,7 @@ class MaiMaiJudge:
     misses: int
 
 
-@classmethod
+@dataclass(slots=True)
 class MaiMaiPlayRecord:
     """maimaiのプレイ履歴"""
 
