@@ -1,5 +1,7 @@
-httpx
+curl-cffi
 beautifulsoup4
-selenium
-python-dateutil
-tzdata
+patchright
+tzdata; sys.platform=="win32"
+pydantic
+numpy
+opencv-python

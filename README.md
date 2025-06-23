@@ -1,43 +1,48 @@
-# otoge.py
+# otoge.py [Rewrite]
 
-ゲキチュウマイ、BEMANI などのリズムゲームのプレイ履歴やその他諸々を取得・変更する Python ライブラリ。非同期操作(asyncio)のみをサポートしています。
+> [!Note]
+> README is currently available only in Japanese. Until an English version is available, please use the [DeepL translation](https://deepl.com/) to read it.
+
+<small>My english is really bad, so I used [DeepL translation](https://deepl.com/)</small>
 
 > [!Warning]
-> このライブラリを使用して起きた損害についてライブラリ作成者の[nennneko5787](https://x.com/Fng1Bot)は一切責任を負いません。
+> このライブラリを使用して起きた損害について、ライブラリ作成者の[nennneko5787](https://x.com/Fng1Bot)は一切の責任を負いません。
 
 ## 現在サポート中のゲーム
 
-### ゲキチュウマイ (SEGA)
+`rewrite` ブランチ作成時は全非対応
+
+### SEGA
 
 - [ ] CHUNITHM
-- [x] maimai でらっくす
-  - プロフィール閲覧
-  - プレイ履歴閲覧
-    - 詳細を取得することができます(別途関数の実行が必要)
-  - ユーザーネーム変更
+- [ ] maimai でらっくす
 - [ ] オンゲキ
+
+#### 遊んだことない
+
+- [ ] 初音ミク Project DIVA Arcade
 
 ### KONAMI
 
-- [x] pop'n music
-  - プロフィール閲覧
-  - プレイ履歴閲覧
-    - 詳細の取得にはまだ対応していません
-- [ ] beatmania
+- [ ] pop'n music
+- [ ] beatmania IIDX
 - [ ] SOUND VOLTEX
-- [x] ノスタルジア
-  - プロフィール閲覧
-  - プレイ履歴閲覧
-    - maimai でらっくすとは異なり、最初から判定データが入っています
-- [x] ポラリスコード
-  - プロフィール閲覧
-    - 最後に遊んだ店名の取得に対応
-  - プレイ履歴閲覧
-    - maimai でらっくすとは異なり、最初から判定データが入っています
+- [ ] Dance Dance Revolution
+- [ ] GITADORA
+- [ ] DANCE aROUND
+- [ ] jubeat
+- [ ] REFLEC BEAT
+- [ ] ノスタルジア
+- [ ] ポラリスコード
+
+#### 遊んだことない
+
+- [ ] MÚSECA
+- [ ] Dance Evolution ARCADE
 
 ## お願い
 
-私は音ゲーに疎いので追加してほしい値・機能などありましたら **イシュー(issues)** または **プルリクエスト(Pull request)** を投げていただけるとありがたいです。
+バグがありましたら **イシュー(issues)** または **プルリクエスト(Pull request)** を投げていただけるとありがたいです。
 
 ## How to install
 
@@ -45,21 +50,13 @@
 
 - Python 3.8 より上のバージョン
 
-##### 多くの場合、以下のライブラリはインストール時に構成されます。
-
-- httpx
-- beautifulsoup4
-- selenium
-- python-dateutil
-- tzdata
-
 ```bash
 # development builds
-pip install git+https://github.com/nennneko5787/otoge.py
+pip install git+https://github.com/nennneko5787/otoge.py@rewrite
 # release builds
 pip install otoge.py
 ```
 
 ## examples
 
-[example フォルダー](/example)にサンプルが入っています。
+[examples フォルダー](/examples)にサンプルが入っています。
