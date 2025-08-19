@@ -3,7 +3,7 @@
 > [!Note]
 > README is currently available only in Japanese. Until an English version is available, please use the [DeepL translation](https://deepl.com/) to read it.
 
-<small>My english is really bad, so I used [DeepL translation](https://deepl.com/)</small>
+~~<small>My english is really bad, so I used [DeepL translation](https://deepl.com/).</small>~~
 
 > [!Warning]
 > このライブラリを使用して起きた損害について、ライブラリ作成者の[nennneko5787](https://x.com/Fng1Bot)は一切の責任を負いません。
@@ -39,6 +39,10 @@
 
 - [ ] MÚSECA
 - [ ] Dance Evolution ARCADE
+
+### BANDAI
+
+- [ ] 太鼓の達人
 
 ## お願い
 
