@@ -27,4 +27,4 @@ Issues = "https://github.com/nennneko5787/otoge.py/issues"
 dependencies = { file = ["requirements.txt"] }
 
 [tool.setuptools.packages.find]
-exclude = ["devtests*", "venv*"]
+exclude = ["devtests*", "venv*", "*.py"]
